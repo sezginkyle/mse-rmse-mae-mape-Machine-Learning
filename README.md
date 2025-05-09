@@ -1,35 +1,45 @@
-```import numpy as np
-import pandas as pd
+```import pandas as pd
 from sklearn.linear_model import LinearRegression
-df=pd.read_csv("medical.zip")
-df.head(3)
-df=pd.get_dummies(df,columns=["sex","smoker","region"],drop_first=1)
-df.head(3)
-df=df.astype(float)
-df.info()
-y=df[["charges"]]
-x=df.drop("charges",axis=1)
-l=LinearRegression()
-model=l.fit(x,y)
-model.score(x,y)
-model.predict([[19,33,1,0,0,1,0,1]])
-df_charges=pd.DataFrame()
-df_charges["charges"]=y
-df_charges.head(3)
-df_tahmin=model.predict(x)
-df_charges["Tahmin"]=df_tahmin
-df_charges["Fark"]=df_charges["charges"]-df_charges["Tahmin"]
-df_charges["Hatanın Karesi"]=df_charges["Fark"]*df_charges["Fark"]
-for i in range(len(df_charges)):
-    if df_charges["Fark"][i] < 0:
-        df_charges.at[i, "Mutlak Fark"] = -df_charges["Fark"][i]
-    else:
-        df_charges.at[i, "Mutlak Fark"] = df_charges["Fark"][i]
-df_charges["Yuzdelik Hata"]=df_charges["Mutlak Fark"]/df["charges"]
-from sklearn.metrics import mean_squared_error,mean_absolute_error,mean_absolute_percentage_error
-df_charges.mean()
-mean_squared_error(charges,Tahmin)
-charges=df_charges["charges"]
-Tahmin=df_charges["Tahmin"]
-mean_absolute_error(charges,Tahmin)
-mean_absolute_percentage_error(charges,Tahmin)```
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
+
+# Veriyi oku
+df = pd.read_csv("medical.zip")
+
+# Kategorik değişkenleri dummy değişkenlere çevir
+df = pd.get_dummies(df, columns=["sex", "smoker", "region"], drop_first=True)
+
+# Tüm veriyi float'a çevir
+df = df.astype(float)
+
+# Bağımlı ve bağımsız değişkenleri ayır
+y = df[["charges"]]
+x = df.drop("charges", axis=1)
+
+# Doğrusal regresyon modelini eğit
+model = LinearRegression().fit(x, y)
+
+# Modelin R^2 skoru
+print("Model Skoru (R²):", model.score(x, y))
+
+# Örnek bir tahmin
+example = [[19, 33, 1, 0, 0, 1, 0, 1]]  # Bu örnek verinin sırayla tüm özelliklere uygun olması gerekir
+prediction = model.predict(example)
+print("Örnek Tahmin:", prediction)
+
+# Tahminleri oluştur
+df["Tahmin"] = model.predict(x)
+
+# Farkları ve hata metriklerini hesapla
+df["Fark"] = df["charges"] - df["Tahmin"]
+df["Hatanın Karesi"] = df["Fark"] ** 2
+df["Mutlak Fark"] = df["Fark"].abs()
+df["Yuzdelik Hata"] = df["Mutlak Fark"] / df["charges"]
+
+# Hata metriklerini yazdır
+mse = mean_squared_error(df["charges"], df["Tahmin"])
+mae = mean_absolute_error(df["charges"], df["Tahmin"])
+mape = mean_absolute_percentage_error(df["charges"], df["Tahmin"])
+
+print("Ortalama Kare Hata (MSE):", mse)
+print("Ortalama Mutlak Hata (MAE):", mae)
+print("Ortalama Mutlak Yüzde Hata (MAPE):", mape)```
