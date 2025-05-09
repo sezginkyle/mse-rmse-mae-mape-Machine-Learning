@@ -1,4 +1,4 @@
-import numpy as np
+```import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 df=pd.read_csv("medical.zip")
@@ -32,4 +32,4 @@ mean_squared_error(charges,Tahmin)
 charges=df_charges["charges"]
 Tahmin=df_charges["Tahmin"]
 mean_absolute_error(charges,Tahmin)
-mean_absolute_percentage_error(charges,Tahmin)
+mean_absolute_percentage_error(charges,Tahmin)```
